@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:id="@+id/gridlayout_new"
+        android:layout_width="525dip"
+        android:layout_height="413dip"
+        android:layout_marginTop="40dip" >
+    <!-- 月份盘背景 -->
+	
+    <ImageView
+        android:layout_width="525dip"
+        android:layout_height="413dip"
+        android:src="@drawable/calen02720_bottom" />
+    <!-- 网格控件 -->
+
+    <GridView
+        android:id="@+id/gridview_new"
+        android:layout_width="525dip"
+        android:layout_height="413dip"
+        android:columnWidth="75dip"
+        android:numColumns="7"
+        android:verticalSpacing="3dip" >
+    </GridView>
+
+</FrameLayout>

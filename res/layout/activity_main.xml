@@ -1,0 +1,377 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#33000000" >
+
+    <!-- 分成左右两半 -->
+    <!--  android:layout_centerInParent="true" -->
+    <!-- android:layout_gravity="center" -->
+
+    <FrameLayout
+        android:id="@+id/left"
+        android:layout_width="533dip"
+        android:layout_height="555dip"
+        android:layout_marginLeft="100dip"
+        android:layout_marginTop="90dip">
+
+        <!-- backgound image -->
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/calen01a_left" />
+        <!-- backgound image -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <!-- 年月日、时钟布局 -->
+
+            <LinearLayout
+                android:layout_width="535dip"
+                android:layout_height="77dip"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <!-- 左箭头 -->
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dip"
+                    android:src="@drawable/left01" />
+                <!-- 月日年 -->
+
+                <TextView
+                    android:id="@+id/TagYearMonth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dip"
+                    android:text="           "
+                    android:textColor="#FF000000"
+                    android:textSize="40sp" />
+                <!-- 右箭头 -->
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dip"
+                    android:src="@drawable/right01" />
+            </LinearLayout>
+            <!-- 月份盘 -->
+
+          
+                <FrameLayout 
+                    android:id="@+id/windowlayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:orientation="horizontal"
+	                android:layout_marginLeft="9dip"
+	                android:layout_marginTop="40dip">
+	                
+	                <FrameLayout
+	                	android:id="@+id/gridlayout"
+	                    android:layout_width="525dip"
+	                    android:layout_height="413dip" >
+	
+	                    <!-- 月份盘背景 -->
+	
+	                    <ImageView
+	                        android:layout_width="525dip"
+	                        android:layout_height="413dip"
+	                        android:src="@drawable/calen02720_bottom" />
+	                    <!-- 网格控件 -->
+	
+	                    <GridView
+	                        android:id="@+id/gridview"
+	                        android:layout_width="525dip"
+	                        android:layout_height="413dip"
+	                        android:columnWidth="75dip"
+	                        android:numColumns="7"
+	                        android:verticalSpacing="3dip" >
+	                    </GridView>
+	                </FrameLayout>
+	                
+                </FrameLayout>
+           
+        </LinearLayout>
+    </FrameLayout>
+    
+    <FrameLayout
+        android:id="@+id/right"
+        android:layout_width="540dip"
+        android:layout_height="555dip"
+        android:layout_marginLeft="0dip"
+        android:layout_marginTop="90dip"
+        android:layout_toRightOf="@id/left">
+
+        <!-- backgound image -->
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/calen01a_right" />
+        <!-- backgound image -->
+
+        <LinearLayout
+            android:layout_width="540dip"
+            android:layout_height="555dip"
+            android:orientation="vertical" >
+
+            <!-- 时钟 -->
+
+            <LinearLayout
+                android:layout_width="540dip"
+                android:layout_height="77dip"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="156dip"
+                android:orientation="horizontal" >
+
+                <!-- 小时 -->
+
+                <ImageView
+                    android:id="@+id/timer1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/zero" />
+
+                <ImageView
+                    android:id="@+id/timer2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/zero" />
+                <!-- 冒号 -->
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/colon" />
+                <!-- 分钟 -->
+
+                <ImageView
+                    android:id="@+id/timer3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/zero" />
+
+                <ImageView
+                    android:id="@+id/timer4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="540dip"
+                android:layout_height="478dip"
+                android:layout_marginTop="1dip"
+                android:layout_marginBottom="20dip"
+                android:orientation="horizontal" >
+
+                <!-- 右侧黄历 -->
+
+                <com.routon.calendar.MyFrameLayout
+                    android:id="@+id/lunar"
+                    android:layout_width="532dip"
+                    android:layout_height="fill_parent"
+                    android:layout_marginTop="0dip"
+                    android:layout_marginBottom="20dip"
+                    android:paddingBottom="0dip" >
+
+                    <!-- 背景 -->
+
+                    <ImageView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/calendar03" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:orientation="vertical" >
+
+                        <!-- 顶部月日 -->
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="77dip"
+                            android:layout_marginTop="20dip"
+                            android:gravity="center"
+                            android:paddingLeft="20dip"
+                            android:paddingRight="20dip" >
+
+                            <LinearLayout
+                                android:layout_width="166dip"
+                                android:layout_height="wrap_content"
+                                android:gravity="center" >
+
+                                <!-- 月 -->
+
+                                <ImageView
+                                    android:id="@+id/picMonth1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                                <ImageView
+                                    android:id="@+id/picMonth2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/month" />
+                            </LinearLayout>
+                            <!-- 年 -->
+
+                            <ImageView
+                                android:id="@+id/picYear"
+                                android:layout_width="166dip"
+                                android:layout_height="wrap_content" />
+                            <!-- 日 -->
+
+                            <LinearLayout
+                                android:layout_width="166dip"
+                                android:layout_height="wrap_content"
+                                android:gravity="center" >
+
+                                <ImageView
+                                    android:id="@+id/picDay1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                                <ImageView
+                                    android:id="@+id/picDay2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/day" />
+                            </LinearLayout>
+                        </LinearLayout>
+                        <!-- yue ri end -->
+                        <!-- 黄历 -->
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="180dip"
+                            android:gravity="center_horizontal" >
+
+                            <!-- 宜 -->
+
+                            <TextView
+                                android:id="@+id/textSuit"
+                                android:layout_width="160dip"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="40dip"
+                                android:gravity="center_horizontal"
+                                android:paddingLeft="10dip"
+                                android:paddingRight="10dip"
+                                android:textColor="#FF000000"
+                                android:textSize="18sp"
+                                android:maxLines="6"
+                                android:ellipsize="end" />
+                            <!-- 日期数字 -->
+
+                            <LinearLayout
+                                android:layout_width="217dip"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="20dip"
+                                android:gravity="center" >
+
+                                <ImageView
+                                    android:id="@+id/picDayNum1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                                <ImageView
+                                    android:id="@+id/picDayNum2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                            </LinearLayout>
+                            <!-- 忌 -->
+
+                            <TextView
+                                android:id="@+id/textAvoid"
+                                android:layout_width="160dip"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="40dip"
+                                android:ems="1"
+                                android:gravity="center_horizontal"
+                                android:paddingLeft="10dip"
+                                android:paddingRight="10dip"
+                                android:textColor="#FF000000"
+                                android:textSize="18sp" 
+                                android:maxLines="6"
+                                android:ellipsize="end"/>
+                        </LinearLayout>
+                        <!-- huang li -->
+                        <!-- 节日 -->
+
+                        <TextView
+                            android:id="@+id/textJieRi"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:lines="2"
+                            android:gravity="center"
+                            android:text=""
+                            android:textColor="#FFFF0000"
+                            android:textSize="25sp" />
+
+                        <!-- tian gan di zhi -->
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="fill_parent"
+                            android:gravity="center_vertical" >
+
+                            <!-- 天干月 -->
+
+                            <TextView
+                                android:id="@+id/textTGMonth"
+                                android:layout_width="218dip"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:paddingBottom="32dip"
+                                android:paddingLeft="100dip"
+                                android:textColor="#FFFFFFFF"
+                                android:textSize="20sp" />
+                            <!-- 天干年 -->
+
+                            <TextView
+                                android:id="@+id/textTGYear"
+                                android:layout_width="101dip"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:paddingBottom="32dip"
+                                android:textColor="#FFFF0000"
+                                android:textSize="30sp" />
+                            <!-- 天干日 -->
+
+                            <TextView
+                                android:id="@+id/textTGDay"
+                                android:layout_width="218dip"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:paddingBottom="32dip"
+                                android:paddingRight="100dip"
+                                android:textColor="#FFFFFFFF"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+                        <!-- tian gan di zhi -->
+                    </LinearLayout>
+                </com.routon.calendar.MyFrameLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</RelativeLayout>
