@@ -104,6 +104,7 @@ public class MainActivity extends Activity {
 	private int moveMonth = 0;
 	boolean error = true;
 	private boolean focusChange = false;
+	private boolean openAnimation = true;
 
 	/*
 	 * Five days arrays as list of months, each month has up to 31 days Using
@@ -123,7 +124,7 @@ public class MainActivity extends Activity {
 	public void onWindowFocusChanged(boolean hasFocus) {// 当activity显示完成(此时还是透明的)就开始作动画
 		super.onWindowFocusChanged(hasFocus);
 		if (hasFocus) {
-			if (focusChange == false) {
+			if (focusChange == false && openAnimation == true) {
 				mContainer1.setAlpha(1.0f);
 				mContainer2.setAlpha(1.0f);
 				animationAtStart();
@@ -134,9 +135,11 @@ public class MainActivity extends Activity {
 
 	@Override
 	public void onBackPressed() {// 拦截退出事件，作完动画再退出
-		if (animation_completed == true)
-			animationAtFinish();
-		// super.onBackPressed();
+		if (openAnimation == true) {
+			if (animation_completed == true)
+				animationAtFinish();
+		} else
+			super.onBackPressed();
 	}
 
 	@Override
@@ -145,26 +148,29 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		// Full screen
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		MapRes();
 
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null){
+			if(bundle.containsKey("cmd_args"))
+				if(bundle.getString("cmd_args").equals("NoAnimation"))
+					openAnimation = false;
+		}
 		setContentView(R.layout.activity_main);
 
 		gridLayout = (FrameLayout) findViewById(R.id.gridlayout);
-		gridLayout_new = (FrameLayout) View.inflate(this,
-				R.layout.gridlayout_new, null);
+		gridLayout_new = (FrameLayout) View.inflate(this, R.layout.gridlayout_new, null);
 		gridview = (GridView) findViewById(R.id.gridview);
-		gridview_new = (GridView) gridLayout_new
-				.findViewById(R.id.gridview_new);
+		gridview_new = (GridView) gridLayout_new.findViewById(R.id.gridview_new);
 		windowLayout = (FrameLayout) findViewById(R.id.windowlayout);
 
 		timer1 = (ImageView) findViewById(R.id.timer1);
 		timer2 = (ImageView) findViewById(R.id.timer2);
 		timer3 = (ImageView) findViewById(R.id.timer3);
 		timer4 = (ImageView) findViewById(R.id.timer4);
-
+		
 		list = new ArrayList<GridInfo>();
 		listOld = new ArrayList<GridInfo>();
 		for (int i = 0; i < 42; i++) {
@@ -181,8 +187,7 @@ public class MainActivity extends Activity {
 
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				// GridInfo item = (GridInfo) arg0.getItemAtPosition(arg2);
 				// Log.i(item.getGC(), item.getLC());
 				/* Get the day */
@@ -202,17 +207,14 @@ public class MainActivity extends Activity {
 					}
 
 					int dayChange = compareDays(lunarDayShow, day);
-					Log.i("tag", "dayChange = " + dayChange + " , day = "
-							+ day.lunarday + " " + day.lunarmonth + " "
-							+ day.lunaryear);
+					Log.i("tag", "dayChange = " + dayChange + " , day = " + day.lunarday + " " + day.lunarmonth + " " + day.lunaryear);
 					if (dayChange != 0) {
 						if (dayChange < 0)
 							reverse = false;
 						else
 							reverse = true;
 
-						Log.i("TAG", "FLAG : day:" + day.lunaryear
-								+ day.lunarmonth + day.lunarday + day.number);
+						Log.i("TAG", "FLAG : day:" + day.lunaryear + day.lunarmonth + day.lunarday + day.number);
 						almanacFrameLayout = (MyFrameLayout) findViewById(R.id.lunar);
 						almanacFrameLayout.prepareAnimation(reverse);
 						almanacFrameLayout.invalidate();
@@ -232,91 +234,17 @@ public class MainActivity extends Activity {
 				// System.out.println(keyCode);
 				focXY.X = gridview.getSelectedItemPosition() % 7 + 1;
 				focXY.Y = gridview.getSelectedItemPosition() / 7 + 1;
-				Log.i("TAG", "================= x = " + focXY.X + " , y = "
-						+ focXY.Y);
+				Log.i("TAG", "================= x = " + focXY.X + " , y = " + focXY.Y);
 				if (event.getAction() == KeyEvent.ACTION_DOWN) {
 					if (processBusy == true) {
 						return false;
 					}
 					processBusy = true;
 					switch (keyCode) {
-					case KeyEvent.KEYCODE_BACK:
-					case KeyEvent.KEYCODE_ESCAPE:
-						break;
-					case KeyEvent.KEYCODE_MEDIA_REWIND:
-						if (animation_completed == true) {
-							// load prev month
-							curymd.Year = preymd.Year;
-							curymd.Month = preymd.Month;
-							updateYMD(curymd);
-							new Thread(CURB).start();
-						}
-						break;
-					case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
-						if (animation_completed == true) {
-							// load next month
-							/* update YMD */
-							curymd.Year = nexymd.Year;
-							curymd.Month = nexymd.Month;
-							updateYMD(curymd);
-							new Thread(CUR).start();
-						}
-						break;
-					case KeyEvent.KEYCODE_DPAD_RIGHT:
-
-						if (focXY == null) {
-							processBusy = false;
+						case KeyEvent.KEYCODE_BACK:
+						case KeyEvent.KEYCODE_ESCAPE:
 							break;
-						}
-						if (focXY.X == 7) {
-							if (focXY.Y == 6) {
-								if (animation_completed == true) {
-									// load next month
-									/* update YMD */
-									curymd.Year = nexymd.Year;
-									curymd.Month = nexymd.Month;
-									updateYMD(curymd);
-									new Thread(CUR).start();
-								}
-							} else {
-								// focXY.Y++;
-								// focXY.X = 1;
-								gridview.setSelection((focXY.Y) * 7);
-								processBusy = false;
-							}
-						} else {
-							// focXY.X++;
-							processBusy = false;
-						}
-
-						break;
-					case KeyEvent.KEYCODE_DPAD_DOWN:
-
-						if (focXY == null) {
-							processBusy = false;
-							break;
-						}
-						if (focXY.Y == 6) {
-							if (animation_completed == true) {
-								// load next month
-								curymd.Year = nexymd.Year;
-								curymd.Month = nexymd.Month;
-								updateYMD(curymd);
-								new Thread(CUR).start();
-							}
-						} else {
-							// focXY.Y++;
-							processBusy = false;
-						}
-
-						break;
-					case KeyEvent.KEYCODE_DPAD_UP:
-
-						if (focXY == null) {
-							processBusy = false;
-							break;
-						}
-						if (focXY.Y == 1) {
+						case KeyEvent.KEYCODE_MEDIA_REWIND:
 							if (animation_completed == true) {
 								// load prev month
 								curymd.Year = preymd.Year;
@@ -324,20 +252,71 @@ public class MainActivity extends Activity {
 								updateYMD(curymd);
 								new Thread(CURB).start();
 							}
-
-						} else {
-							// focXY.Y--;
-							processBusy = false;
-						}
-
-						break;
-					case KeyEvent.KEYCODE_DPAD_LEFT:
-
-						if (focXY == null) {
-							processBusy = false;
 							break;
-						}
-						if (focXY.X == 1) {
+						case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
+							if (animation_completed == true) {
+								// load next month
+								/* update YMD */
+								curymd.Year = nexymd.Year;
+								curymd.Month = nexymd.Month;
+								updateYMD(curymd);
+								new Thread(CUR).start();
+							}
+							break;
+						case KeyEvent.KEYCODE_DPAD_RIGHT:
+
+							if (focXY == null) {
+								processBusy = false;
+								break;
+							}
+							if (focXY.X == 7) {
+								if (focXY.Y == 6) {
+									if (animation_completed == true) {
+										// load next month
+										/* update YMD */
+										curymd.Year = nexymd.Year;
+										curymd.Month = nexymd.Month;
+										updateYMD(curymd);
+										new Thread(CUR).start();
+									}
+								} else {
+									// focXY.Y++;
+									// focXY.X = 1;
+									gridview.setSelection((focXY.Y) * 7);
+									processBusy = false;
+								}
+							} else {
+								// focXY.X++;
+								processBusy = false;
+							}
+
+							break;
+						case KeyEvent.KEYCODE_DPAD_DOWN:
+
+							if (focXY == null) {
+								processBusy = false;
+								break;
+							}
+							if (focXY.Y == 6) {
+								if (animation_completed == true) {
+									// load next month
+									curymd.Year = nexymd.Year;
+									curymd.Month = nexymd.Month;
+									updateYMD(curymd);
+									new Thread(CUR).start();
+								}
+							} else {
+								// focXY.Y++;
+								processBusy = false;
+							}
+
+							break;
+						case KeyEvent.KEYCODE_DPAD_UP:
+
+							if (focXY == null) {
+								processBusy = false;
+								break;
+							}
 							if (focXY.Y == 1) {
 								if (animation_completed == true) {
 									// load prev month
@@ -346,20 +325,42 @@ public class MainActivity extends Activity {
 									updateYMD(curymd);
 									new Thread(CURB).start();
 								}
+
 							} else {
 								// focXY.Y--;
-								// focXY.X = 7;
-								gridview.setSelection((focXY.Y - 2) * 7 + 6);
 								processBusy = false;
 							}
-						} else {
-							// focXY.X--;
-							processBusy = false;
-						}
 
-						break;
-					default:
-						processBusy = false;
+							break;
+						case KeyEvent.KEYCODE_DPAD_LEFT:
+
+							if (focXY == null) {
+								processBusy = false;
+								break;
+							}
+							if (focXY.X == 1) {
+								if (focXY.Y == 1) {
+									if (animation_completed == true) {
+										// load prev month
+										curymd.Year = preymd.Year;
+										curymd.Month = preymd.Month;
+										updateYMD(curymd);
+										new Thread(CURB).start();
+									}
+								} else {
+									// focXY.Y--;
+									// focXY.X = 7;
+									gridview.setSelection((focXY.Y - 2) * 7 + 6);
+									processBusy = false;
+								}
+							} else {
+								// focXY.X--;
+								processBusy = false;
+							}
+
+							break;
+						default:
+							processBusy = false;
 					}
 				}
 				return false;
@@ -370,8 +371,13 @@ public class MainActivity extends Activity {
 
 		mContainer1 = (ViewGroup) findViewById(R.id.left);
 		mContainer2 = (ViewGroup) findViewById(R.id.right);
-		mContainer1.setAlpha(0);// 先隐藏
-		mContainer2.setAlpha(0);
+		if (openAnimation == true) {
+			mContainer1.setAlpha(0);// 先隐藏
+			mContainer2.setAlpha(0);
+		}else {
+			new Thread(m).start();
+			new Thread(CTR).start();
+		}
 	}
 
 	public class CalendarTimerRunnable implements Runnable {
@@ -464,10 +470,8 @@ public class MainActivity extends Activity {
 				gridAnimator = null;
 				gridNewAnimator = null;
 				windowLayout.addView(gridLayout_new);
-				gridAnimator = ObjectAnimator.ofFloat(gridLayout, "x",
-						gridLayout.getWidth(), 0);
-				gridNewAnimator = ObjectAnimator.ofFloat(gridLayout_new, "x",
-						0, -gridLayout.getWidth());
+				gridAnimator = ObjectAnimator.ofFloat(gridLayout, "x", gridLayout.getWidth(), 0);
+				gridNewAnimator = ObjectAnimator.ofFloat(gridLayout_new, "x", 0, -gridLayout.getWidth());
 				gridAnimator.setDuration(500);
 				gridNewAnimator.setDuration(500);
 			} else if (state == 2) {
@@ -476,10 +480,8 @@ public class MainActivity extends Activity {
 				gridAnimator = null;
 				gridNewAnimator = null;
 				windowLayout.addView(gridLayout_new);
-				gridAnimator = ObjectAnimator.ofFloat(gridLayout, "x",
-						-gridLayout.getWidth(), 0);
-				gridNewAnimator = ObjectAnimator.ofFloat(gridLayout_new, "x",
-						0, gridLayout.getWidth());
+				gridAnimator = ObjectAnimator.ofFloat(gridLayout, "x", -gridLayout.getWidth(), 0);
+				gridNewAnimator = ObjectAnimator.ofFloat(gridLayout_new, "x", 0, gridLayout.getWidth());
 				gridAnimator.setDuration(500);
 				gridNewAnimator.setDuration(500);
 			}
@@ -491,9 +493,7 @@ public class MainActivity extends Activity {
 			focXY.X = position % 7 + 1;
 
 			/* 设置当前日期高亮 */
-			if (curymd.Month == curCal.get(Calendar.MONTH)
-					&& curymd.Year == curCal.get(Calendar.YEAR)
-					&& gridview.isFocusable()) {
+			if (curymd.Month == curCal.get(Calendar.MONTH) && curymd.Year == curCal.get(Calendar.YEAR) && gridview.isFocusable()) {
 				setCurDayHightLight(curDayPosition);
 			} else {
 				unsetCurDayHightLight(curDayPosition);
@@ -504,8 +504,7 @@ public class MainActivity extends Activity {
 
 			/* 设置顶部年月标题 */
 			TextView tagYearMonth = (TextView) findViewById(R.id.TagYearMonth);
-			String textCurYearMonth = Integer.toString(curymd.Year) + "年"
-					+ Integer.toString(curymd.Month + 1) + "月";
+			String textCurYearMonth = Integer.toString(curymd.Year) + "年" + Integer.toString(curymd.Month + 1) + "月";
 			tagYearMonth.setText(textCurYearMonth);
 
 			/* 移动动画 */
@@ -565,11 +564,8 @@ public class MainActivity extends Activity {
 		private CalendarXmlParser xmlParser = new CalendarXmlParser();
 
 		public void run() {
-
 			curCal = Calendar.getInstance();
-			curymd = new YMD(curCal.get(Calendar.YEAR),
-					curCal.get(Calendar.MONTH),
-					curCal.get(Calendar.DAY_OF_MONTH));
+			curymd = new YMD(curCal.get(Calendar.YEAR), curCal.get(Calendar.MONTH), curCal.get(Calendar.DAY_OF_MONTH));
 			preymd = new YMD();
 			nexymd = new YMD();
 			updateYMD(curymd);
@@ -904,24 +900,24 @@ public class MainActivity extends Activity {
 		}
 		try {
 			switch (state) {
-			case 0:
-				preMonth = months.get(0);
-				curMonth = months.get(1);
-				nexMonth = months.get(2);
-				curMonInd = 1;
-				break;
-			case 1:// 向前移动一个月
-				curMonInd++;
-				preMonth = months.get(curMonInd - 1);
-				curMonth = months.get(curMonInd);
-				nexMonth = months.get(curMonInd + 1);
-				break;
-			case 2:// 向后移动一个月
-				curMonInd--;
-				preMonth = months.get(curMonInd - 1);
-				curMonth = months.get(curMonInd);
-				nexMonth = months.get(curMonInd + 1);
-				break;
+				case 0:
+					preMonth = months.get(0);
+					curMonth = months.get(1);
+					nexMonth = months.get(2);
+					curMonInd = 1;
+					break;
+				case 1:// 向前移动一个月
+					curMonInd++;
+					preMonth = months.get(curMonInd - 1);
+					curMonth = months.get(curMonInd);
+					nexMonth = months.get(curMonInd + 1);
+					break;
+				case 2:// 向后移动一个月
+					curMonInd--;
+					preMonth = months.get(curMonInd - 1);
+					curMonth = months.get(curMonInd);
+					nexMonth = months.get(curMonInd + 1);
+					break;
 			}
 		} catch (IndexOutOfBoundsException e) {
 			Log.i("IndexExcep", String.valueOf(state));
@@ -933,8 +929,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void setCurDayHightLight(int index) {
-		ImageView spot = (ImageView) ((ViewGroup) gridview.getChildAt(index))
-				.getChildAt(0);
+		ImageView spot = (ImageView) ((ViewGroup) gridview.getChildAt(index)).getChildAt(0);
 		spot.setImageResource(R.drawable.spot);
 		// TextView GC = (TextView) ((ViewGroup) ((ViewGroup)
 		// gridview.getChildAt(index)).getChildAt(1)).getChildAt(0);
@@ -944,8 +939,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void unsetCurDayHightLight(int index) {
-		ImageView spot = (ImageView) ((ViewGroup) gridview.getChildAt(index))
-				.getChildAt(0);
+		ImageView spot = (ImageView) ((ViewGroup) gridview.getChildAt(index)).getChildAt(0);
 		spot.setImageResource(android.R.color.transparent);
 		// TextView GC = (TextView) ((ViewGroup) ((ViewGroup)
 		// gridview.getChildAt(index)).getChildAt(1)).getChildAt(0);
@@ -1047,22 +1041,15 @@ public class MainActivity extends Activity {
 		lunarMonMap.put("正", 1);
 	}
 
-	public int[] lunarNumPic = { 0, R.drawable.cone, R.drawable.ctwo,
-			R.drawable.cthree, R.drawable.cfour, R.drawable.cfive,
-			R.drawable.csix, R.drawable.cseven, R.drawable.ceight,
-			R.drawable.cnine, R.drawable.cten, 0, R.drawable.la, };
+	public int[] lunarNumPic = { 0, R.drawable.cone, R.drawable.ctwo, R.drawable.cthree, R.drawable.cfour, R.drawable.cfive,
+			R.drawable.csix, R.drawable.cseven, R.drawable.ceight, R.drawable.cnine, R.drawable.cten, 0, R.drawable.la, };
 
-	public int[] otherPic = { R.drawable.twenty, R.drawable.ori,
-			R.drawable.week, R.drawable.winter, R.drawable.xiao,
-			R.drawable.zheng };
+	public int[] otherPic = { R.drawable.twenty, R.drawable.ori, R.drawable.week, R.drawable.winter, R.drawable.xiao, R.drawable.zheng };
 
-	public int[] BigNum = { R.drawable.bzero, R.drawable.bone, R.drawable.btwo,
-			R.drawable.bthree, R.drawable.bfour, R.drawable.bfive,
-			R.drawable.bsix, R.drawable.bseven, R.drawable.beight,
-			R.drawable.bnine };
-	public int[] Minute = { R.drawable.zero, R.drawable.one, R.drawable.two,
-			R.drawable.three, R.drawable.four, R.drawable.five, R.drawable.six,
-			R.drawable.seven, R.drawable.eight, R.drawable.nine };
+	public int[] BigNum = { R.drawable.bzero, R.drawable.bone, R.drawable.btwo, R.drawable.bthree, R.drawable.bfour, R.drawable.bfive,
+			R.drawable.bsix, R.drawable.bseven, R.drawable.beight, R.drawable.bnine };
+	public int[] Minute = { R.drawable.zero, R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five,
+			R.drawable.six, R.drawable.seven, R.drawable.eight, R.drawable.nine };
 
 	/*
 	 * 需要额外定义一个属性动画的原因是因为如果只应用自定义的Rotation3DAnimation， 那么两个view不会更新 原因待查
@@ -1071,8 +1058,7 @@ public class MainActivity extends Activity {
 		if (true) {
 			animation_completed = false;
 			AnimatorSet set1 = new AnimatorSet();
-			set1.playTogether(
-					ObjectAnimator.ofFloat(mContainer1, "alpha", 0.6f, 1.0f),
+			set1.playTogether(ObjectAnimator.ofFloat(mContainer1, "alpha", 0.6f, 1.0f),
 					ObjectAnimator.ofFloat(mContainer2, "alpha", 0.6f, 1.0f));
 			set1.setDuration(duration_start);
 			set1.start();
@@ -1108,19 +1094,18 @@ public class MainActivity extends Activity {
 		if (true) {
 			animation_completed = false;
 			AnimatorSet set1 = new AnimatorSet();
-			set1.playTogether(
-					ObjectAnimator.ofFloat(mContainer1, "alpha", 1.0f, 0.5f),
+			set1.playTogether(ObjectAnimator.ofFloat(mContainer1, "alpha", 1.0f, 0.5f),
 					ObjectAnimator.ofFloat(mContainer2, "alpha", 1.0f, 0.5f));
 			set1.setDuration(duration_finish);
 
-			 set1.addListener(new AnimatorListenerAdapter() {
-			 @Override
-			 public void onAnimationEnd(Animator animation) {
-			 // TODO Auto-generated method stub
-			 android.os.Process.killProcess(android.os.Process.myPid());
-			 finish();// 结束activity
-			 }
-			 });
+			set1.addListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					// TODO Auto-generated method stub
+					android.os.Process.killProcess(android.os.Process.myPid());
+					finish();// 结束activity
+				}
+			});
 			set1.start();
 		}
 		applyRotation(true);
@@ -1147,14 +1132,12 @@ public class MainActivity extends Activity {
 
 		// 注意，这里的x,y的起点终点移动距离与屏幕像素坐标不一样，因为有深度改变，所以x, y的值要偏大,而且完全靠感觉调整
 
-		rotation1 = new RotateY3dAnimation(centerX, centerY, 0, 0, 1100, 0,
-				-2800, 0, 5000, reverse);
+		rotation1 = new RotateY3dAnimation(centerX, centerY, 0, 0, 1100, 0, -2800, 0, 5000, reverse);
 		rotation1.setDuration(duration);
 		rotation1.setFillAfter(true);
 		mContainer1.setAnimation(rotation1);
 
-		rotation2 = new RotateY3dAnimation(0, centerY, -180, 0, 1100, 0, -2800,
-				0, 5000, reverse);
+		rotation2 = new RotateY3dAnimation(0, centerY, -180, 0, 1100, 0, -2800, 0, 5000, reverse);
 
 		rotation2.setDuration(duration);
 		rotation2.setFillAfter(true);
